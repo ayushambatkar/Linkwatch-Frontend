@@ -1,4 +1,4 @@
-import { loadAuthState, saveAuthState } from './auth';
+import { clearAuthState, loadAuthState, saveAuthState } from './auth';
 import type { AuthState, Link, LinkAnalytics, OverviewAnalytics } from './types';
 import { AppConstants } from './config/appConstants';
 
@@ -75,14 +75,24 @@ export async function withAutoRefresh<T>(
       throw error;
     }
 
-    const newAccessToken = await refreshAccessToken(authState.refreshToken);
-    const updatedState: AuthState = {
-      ...authState,
-      accessToken: newAccessToken,
-    };
-    saveAuthState(updatedState);
+    try {
+      const newAccessToken = await refreshAccessToken(authState.refreshToken);
+      const updatedState: AuthState = {
+        ...authState,
+        accessToken: newAccessToken,
+      };
+      saveAuthState(updatedState);
 
-    return operation(newAccessToken);
+      return operation(newAccessToken);
+    } catch {
+      clearAuthState();
+
+      if (typeof window !== 'undefined') {
+        window.location.replace('/');
+      }
+
+      throw new Error('Session expired. Please sign in again.');
+    }
   }
 }
 
