@@ -117,7 +117,7 @@ export function HomePage() {
         </article>
 
         <article className="panel quick-actions">
-          <h2>Quick navigation</h2>
+          <h2>Quick navigation setup</h2>
           <p className="muted">
             Fun internet fact: the very first webcam streamed a coffee pot, because even brilliant engineers fear walking to an empty machine.
           </p>
